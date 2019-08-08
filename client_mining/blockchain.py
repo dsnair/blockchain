@@ -195,6 +195,14 @@ def chain_validity():
     return jsonify(response), 200
 
 
+@app.route('/last_proof', methods=['GET'])
+def last_proof():
+    response = {
+        'proof': blockchain.last_block.proof
+    }
+    return jsonify(response), 200
+
+
 # Run the program on port 5000
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
