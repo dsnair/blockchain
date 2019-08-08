@@ -87,9 +87,7 @@ class Blockchain(object):
         # hexdigest converts to hexadecimal
         guess_hash = hashlib.sha256(guess).hexdigest()
 
-        # TODO: change back to guess_hash[:6] == '000000'
-        # Lowering required leading zeroes to 4 for fast testing
-        return guess_hash[:4] == '0000'
+        return guess_hash[:6] == '000000'
 
     def valid_chain(self, chain):
         """
