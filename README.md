@@ -12,4 +12,12 @@ deactivate  # deactivate virtual env
 exit  # exit project
 ```
 
-Remember to restart the server after making code changes!
+## Implementation
+
+- Remember to restart the server after making code changes!
+- To run the code,
+
+```shell
+cd [directory_name]
+python3 blockchain.py
+```

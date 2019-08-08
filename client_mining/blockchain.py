@@ -207,7 +207,7 @@ def chain_validity():
 @app.route('/last_proof', methods=['GET'])
 def last_proof():
     response = {
-        'proof': blockchain.last_block.proof
+        'proof': blockchain.last_block['proof']
     }
     return jsonify(response), 200
 
