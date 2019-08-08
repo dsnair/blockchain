@@ -1,6 +1,5 @@
 import hashlib
 import requests
-
 import sys
 
 
@@ -15,6 +14,7 @@ if __name__ == '__main__':
         node = "http://localhost:5000"
 
     coins_mined = 0
+    
     # Run forever until interrupted
     while True:
         # TODO: Get the last proof from the server and look for a new one
