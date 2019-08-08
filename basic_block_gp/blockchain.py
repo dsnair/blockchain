@@ -82,11 +82,17 @@ class Blockchain(object):
         
         :return: <int> A valid proof
         """
+        block_string = json.dumps(self.last_block, sort_keys=True).encode()
 
-        pass
+        proof = 0
+        while not self.valid_proof(block_string, proof):
+            proof += 1
+
+        print("proof", proof)
+        return proof
 
     @staticmethod
-    def valid_proof(proof):
+    def valid_proof(block_string, proof):
         """
         Validates the Proof:  Does hash(last_block_string, proof) contain 6
         leading zeroes?
@@ -94,8 +100,10 @@ class Blockchain(object):
         :param proof: <string> The proposed proof
         :return: <bool> Return true if the proof is valid, false if it is not
         """
-        # TODO
-        pass
+        guess = f'{block_string}{proof}'.encode()
+        # hexdigest converts to hexadecimal
+        guess_hash = hashlib.sha256(guess).hexdigest()
+        return guess_hash[:6] == '000000'
 
     def valid_chain(self, chain):
         """
@@ -181,7 +189,7 @@ def new_transaction():
 @app.route('/chain', methods=['GET'])
 def full_chain():
     response = {
-        # TODO: Return the chain and its current length
+        # Return the chain and its current length
         'chain': blockchain.chain,
         'length': len(blockchain.chain)
     }
