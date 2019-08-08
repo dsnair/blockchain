@@ -124,11 +124,11 @@ class Blockchain(object):
             print(f'{prev_block}')
             print(f'{block}')
             print("\n-------------------\n")
-            # Check that the hash of the block is correct
-            # TODO: Return false if hash isn't correct
+            # Check that the hash of the block is correct:
+            # Return false if hash isn't correct
 
-            # Check that the Proof of Work is correct
-            # TODO: Return false if proof isn't correct
+            # Check that the Proof of Work is correct:
+            # Return false if proof isn't correct
 
             prev_block = block
             current_index += 1
