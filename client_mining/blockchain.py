@@ -135,8 +135,8 @@ blockchain = Blockchain()
 
 @app.route('/mine', methods=['GET'])
 def mine():
-    # We run the proof of work algorithm to get the next proof...
-    proof = blockchain.proof_of_work()
+    # request.args.get() is a Flask method. It receives 'proof' from client
+    proof = request.args.get('proof')
 
     # We must receive a reward for finding the proof:
     # The sender is "0" to signify that this node has mine a new coin
