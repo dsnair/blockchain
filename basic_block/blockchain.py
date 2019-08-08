@@ -126,9 +126,15 @@ class Blockchain(object):
             print("\n-------------------\n")
             # Check that the hash of the block is correct:
             # Return false if hash isn't correct
+            if block['previous_hash'] != self.hash(prev_block):
+                return False
 
             # Check that the Proof of Work is correct:
             # Return false if proof isn't correct
+            block_string = json.dumps(prev_block, sort_keys=True).encode()
+            
+            if not self.valid_proof(block_string, block["proof"]):
+                return False
 
             prev_block = block
             current_index += 1
@@ -196,6 +202,14 @@ def full_chain():
         # Return the chain and its current length
         'chain': blockchain.chain,
         'length': len(blockchain.chain)
+    }
+    return jsonify(response), 200
+
+
+@app.route('/chain_validity', methods=['GET'])
+def chain_validity():
+    response = {
+        'valid_chain': blockchain.valid_chain(blockchain.chain)
     }
     return jsonify(response), 200
 
