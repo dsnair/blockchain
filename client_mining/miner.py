@@ -1,9 +1,21 @@
 import hashlib
 import requests
+import json
 import sys
 
+# Implement functionality to validate proof 
+def valid_proof(block_string, proof):
+    """
+    Validates the Proof:  Does hash(last_block_string, proof) contain 6
+    leading zeroes?
+    
+    :param proof: <string> The proposed proof
+    :return: <bool> Return true if the proof is valid, false if it is not
+    """
+    guess = f'{block_string}{proof}'.encode()
+    guess_hash = hashlib.sha256(guess).hexdigest()
 
-# TODO: Implement functionality to search for a proof 
+    return guess_hash[:6] == '000000'
 
 
 if __name__ == '__main__':
@@ -11,17 +23,32 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         node = sys.argv[1]
     else:
-        node = "http://localhost:5000"
+        node = 'http://localhost:5000'
+    print('NODE', node)
 
     coins_mined = 0
     
-    # Run forever until interrupted
     while True:
-        # TODO: Get the last proof from the server and look for a new one
-        # TODO: When found, POST it to the server {"proof": new_proof}
-        # TODO: We're going to have to research how to do a POST in Python
-        # HINT: Research `requests` and remember we're sending our data as JSON
-        # TODO: If the server responds with 'New Block Forged'
-        # add 1 to the number of coins mined and print it.  Otherwise,
-        # print the message from the server.
-        pass
+        # Request the latest proof from the `last_proof` endpoint on the server
+        response = requests.get(f'{node}/last_block')
+        last_block = response.json()
+
+        # Run `valid_proof()` until a valid proof is found, validating or rejecting each attempt
+        block_string = json.dumps(last_block, sort_keys=True).encode()
+
+        proof = 0
+        print("Started validating proof ...")
+        while not valid_proof(block_string, proof):
+            proof += 1
+        print("Finished validating proof.")
+        print("PROOF", proof)
+
+        # When a valid proof is found, POST it to the `mine` endpoint as {'proof': new_proof}
+        response = requests.post(f'{node}/mine', data={'proof': proof})
+        print('STATUS', response.status_code)
+
+        # On success, increment coin total by 1
+        if response.status_code == 200 and coins_mined < 2:
+            coins_mined += 1
+
+        print("COINS", coins_mined)

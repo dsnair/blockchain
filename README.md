@@ -15,9 +15,9 @@ exit  # exit project
 ## Implementation
 
 - Remember to restart the server after making code changes!
-- To run the code,
 
-```shell
-cd [directory_name]
-python3 blockchain.py
-```
+- To run `basic_block`, `python3 blockchain.py`
+
+- To run `client_mining`, 
+    - `python3 blockchain.py` in one terminal and `python3 miner.py` in another terminal. 
+    - `blockchain` is the backend and `miner` is the frontend.

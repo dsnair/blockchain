@@ -66,7 +66,6 @@ class Blockchain(object):
 
         # We must make sure that the Dictionary is Ordered,
         # or we'll have inconsistent hashes
-
         block_string = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
 
@@ -84,7 +83,6 @@ class Blockchain(object):
         :return: <bool> Return true if the proof is valid, false if it is not
         """
         guess = f'{block_string}{proof}'.encode()
-        # hexdigest converts to hexadecimal
         guess_hash = hashlib.sha256(guess).hexdigest()
 
         return guess_hash[:6] == '000000'
@@ -129,17 +127,17 @@ app = Flask(__name__)
 # Generate a globally unique address for this node
 node_identifier = str(uuid4()).replace('-', '')
 
-# Instantiate the Blockchain
 blockchain = Blockchain()
 
 
-@app.route('/mine', methods=['GET'])
+@app.route('/mine', methods=['POST'])
 def mine():
-    # request.args.get() is a Flask method. It receives 'proof' from client
-    proof = request.args.get('proof')
+    # request.form() is a Flask method. It receives 'proof' from client
+    proof = request.form.get('proof')
+    print('PROOF in POST /mine', proof)
 
     # Check if proof is valid. Return success/failure message
-    block_string = json.dumps(block, sort_keys=True).encode()
+    block_string = json.dumps(blockchain.last_block, sort_keys=True).encode()
 
     if blockchain.valid_proof(block_string, proof):
         # We must receive a reward for finding the proof:
@@ -152,7 +150,6 @@ def mine():
         last_block_hash = blockchain.hash(blockchain.last_block)
         block = blockchain.new_block(proof, last_block_hash)
 
-        # Send a response with the new block
         response = {
             'message': 'New Block Forged',
             'index': block['index'],
@@ -189,7 +186,6 @@ def new_transaction():
 @app.route('/chain', methods=['GET'])
 def full_chain():
     response = {
-        # Return the chain and its current length
         'chain': blockchain.chain,
         'length': len(blockchain.chain)
     }
@@ -204,14 +200,13 @@ def chain_validity():
     return jsonify(response), 200
 
 
-@app.route('/last_proof', methods=['GET'])
+@app.route('/last_block', methods=['GET'])
 def last_proof():
     response = {
-        'proof': blockchain.last_block['proof']
+        'last_block': blockchain.last_block
     }
     return jsonify(response), 200
 
 
-# Run the program on port 5000
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
