@@ -4,6 +4,7 @@ from time import time
 from uuid import uuid4
 
 from flask import Flask, jsonify, request
+from urllib.parse import urlparse
 
 
 class Blockchain(object):
@@ -138,6 +139,10 @@ class Blockchain(object):
 
         return True
 
+    def register_node(self, address):
+        parsed_url = urlparse(address)
+        self.nodes.add(parsed_url.netloc)
+
 
 # Instantiate our Node
 app = Flask(__name__)
@@ -225,6 +230,24 @@ def last_proof():
     response = {
         'last_block': blockchain.last_block
     }
+    return jsonify(response), 200
+
+
+@app.route('/nodes/register', methods=['POST'])
+def register_nodes():
+    nodes = request.get_json()['nodes']
+
+    if nodes is None:
+        return "Error: please supply a valid list of nodes", 400
+
+    for node in nodes:
+        blockchain.register_node(node)
+
+    response = {
+        'message': "New nodes have been added.",
+        'total_nodes': list(blockchain.nodes)
+    }
+
     return jsonify(response), 200
 
 
