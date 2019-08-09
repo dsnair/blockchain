@@ -20,4 +20,4 @@ exit  # exit project
 
 - To run `client_mining`, 
     - `python3 blockchain.py` in one terminal and `python3 miner.py` in another terminal. 
-    - `blockchain` is the backend and `miner` is the frontend.
+    - `blockchain` is the backend and `miner` is the client.

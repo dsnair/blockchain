@@ -87,39 +87,6 @@ class Blockchain(object):
 
         return guess_hash[:6] == '000000'
 
-    def valid_chain(self, chain):
-        """
-        Determine if a given blockchain is valid
-
-        :param chain: <list> A blockchain
-        :return: <bool> True if valid, False if not
-        """
-
-        prev_block = chain[0]
-        current_index = 1
-
-        while current_index < len(chain):
-            block = chain[current_index]
-            print(f'{prev_block}')
-            print(f'{block}')
-            print("\n-------------------\n")
-            # Check that the hash of the block is correct:
-            # Return false if hash isn't correct
-            if block['previous_hash'] != self.hash(prev_block):
-                return False
-
-            # Check that the Proof of Work is correct:
-            # Return false if proof isn't correct
-            block_string = json.dumps(prev_block, sort_keys=True).encode()
-            
-            if not self.valid_proof(block_string, block["proof"]):
-                return False
-
-            prev_block = block
-            current_index += 1
-
-        return True
-
 
 # Instantiate our Node
 app = Flask(__name__)
@@ -133,7 +100,7 @@ blockchain = Blockchain()
 @app.route('/mine', methods=['POST'])
 def mine():
     # request.form() is a Flask method. It receives 'proof' from client
-    proof = request.form.get('proof')
+    proof = request.get_json()['proof']
     print('PROOF in POST /mine', proof)
 
     # Check if proof is valid. Return success/failure message
@@ -162,42 +129,7 @@ def mine():
         response = {
             'message': 'You provided an invalid proof.'
         }
-        return jsonify(response), 403
-
-
-@app.route('/transactions/new', methods=['POST'])
-def new_transaction():
-    values = request.get_json()
-
-    # Check that the required fields are in the POST'ed data
-    required = ['sender', 'recipient', 'amount']
-    if not all(k in values for k in required):
-        return 'Missing Values', 400
-
-    # Create a new Transaction
-    index = blockchain.new_transaction(values['sender'],
-                                       values['recipient'],
-                                       values['amount'])
-
-    response = {'message': f'Transaction will be added to Block {index}'}
-    return jsonify(response), 201
-
-
-@app.route('/chain', methods=['GET'])
-def full_chain():
-    response = {
-        'chain': blockchain.chain,
-        'length': len(blockchain.chain)
-    }
-    return jsonify(response), 200
-
-
-@app.route('/chain_validity', methods=['GET'])
-def chain_validity():
-    response = {
-        'valid_chain': blockchain.valid_chain(blockchain.chain)
-    }
-    return jsonify(response), 200
+        return jsonify(response), 200
 
 
 @app.route('/last_block', methods=['GET'])

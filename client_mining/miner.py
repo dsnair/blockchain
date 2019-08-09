@@ -48,7 +48,9 @@ if __name__ == '__main__':
         print('STATUS', response.status_code)
 
         # On success, increment coin total by 1
-        if response.status_code == 200 and coins_mined < 2:
+        if response.status_code == 200:
             coins_mined += 1
-
         print("COINS", coins_mined)
+
+        if coins_mined > 5:
+            break

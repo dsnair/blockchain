@@ -1,6 +1,6 @@
 # Communication with other nodes
 
-What about our other nodes?  The underlying principle is that all active nodes should be maintaining the same blockchain.  This means that when when a node adds a block to the chain, it needs to tell the other nodes in the network to do the same.  
+What about our other nodes? The underlying principle is that all active nodes should be maintaining the same blockchain. This means that when a node adds a block to the chain, it needs to tell the other nodes in the network to do the same.  
 
 
 # Task List
