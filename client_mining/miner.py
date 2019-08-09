@@ -29,7 +29,7 @@ if __name__ == '__main__':
     coins_mined = 0
     
     while True:
-        # Request the latest proof from the `last_proof` endpoint on the server
+        # Request the latest proof from the `last_block` endpoint on the server
         response = requests.get(f'{node}/last_block')
         last_block = response.json()
 
