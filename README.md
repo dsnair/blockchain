@@ -1,3 +1,5 @@
+A blockchain is a linked list of dictionaries.
+
 https://imgur.com/xSlgvtl
 
 Based on blockchain by dvf. Used under MIT license:  https://github.com/dvf/blockchain
