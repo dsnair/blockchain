@@ -143,6 +143,17 @@ class Blockchain(object):
         parsed_url = urlparse(address)
         self.nodes.add(parsed_url.netloc)
 
+    def broadcast_new_block(self, new_block):
+        neighbors = self.nodes
+        post_data = {'block': new_block}
+
+        for node in neighbors:
+            response = request.post(f'http://{node}/block/new', json=post_data)
+
+            if response.status_code != 200:
+                # Error handling
+                pass
+
 
 # Instantiate our Node
 app = Flask(__name__)
@@ -249,6 +260,40 @@ def register_nodes():
     }
 
     return jsonify(response), 200
+
+
+@app.route('/block/new', methods=['POST'])
+def receive_block():
+    new_block = request.get_json()['block']
+
+    # TODO: Validate that it's a peer in the network
+
+    # Check index of block and make sure it's 1 greater than previous
+    old_block = blockchain.last_block
+
+    if new_block['index'] == old_block['index'] + 1:
+        # Index is correct
+        if new_block['previous_hash'] == blockchain.hash(old_block):
+            # Hash is good
+            block_string = json.dumps(old_block, sort_keys=True).encode()
+            if blockchain.valid_proof(block_string, new_block['proof']):
+                # Proof is valid
+                print("New block accepted.")
+                blockchain.add(new_block)
+                return 'Block Accepted', 200
+            else:
+                # Bad proof
+                pass
+        else:
+            # Hashes don't match
+            pass
+    else:
+        # Index is more than 1 greater
+        # Block may be invalid, or may be behind
+        # Do consensus process
+        # Ask all of the nodes in our network for their chains
+        # Check their lengths and replace ours with the longest valid chain
+        pass
 
 
 # Run the program on port 5000
